@@ -1,71 +1,42 @@
-import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react'
+import { useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-// Lazy-load Spline to avoid hard failures on browsers/environments without WebGL
-const LazySpline = lazy(() =>
-  import('@splinetool/react-spline')
-    .then((m) => ({ default: m.default }))
-    .catch(() => ({ default: () => null }))
-)
-
 export default function Hero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const { scrollYProgress } = useScroll()
 
   // Respect reduced motion preferences
-  const [reducedMotion, setReducedMotion] = useState(false)
+  const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Subtle parallax for background accents (disabled if reduced motion)
+  const y1 = useTransform(scrollYProgress, [0, 1], prefersReduced ? [0, 0] : [0, -80])
+  const y2 = useTransform(scrollYProgress, [0, 1], prefersReduced ? [0, 0] : [0, -40])
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'matchMedia' in window) {
-      const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-      setReducedMotion(mq.matches)
-      const listener = (e) => setReducedMotion(e.matches)
-      mq.addEventListener?.('change', listener)
-      return () => mq.removeEventListener?.('change', listener)
-    }
+    // no-op: hook exists to keep parity if we later expand motion prefs
   }, [])
 
-  // Parallax transforms for cinematic feel (disabled if reduced motion)
-  const translateY = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0, 0] : [0, -140])
-  const scale = useTransform(scrollYProgress, [0, 1], reducedMotion ? [1, 1] : [1, 1.12])
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0.18, 0.18] : [0.12, 0.4])
-
-  // Guard rendering Spline only on client
-  const canRender3D = useMemo(() => typeof window !== 'undefined', [])
-
   return (
-    <section ref={ref} className="relative min-h-[110vh] flex items-center overflow-hidden bg-slate-950">
-      {/* 3D Parallax Background (with safe fallback) */}
-      <motion.div style={{ y: translateY, scale }} className="absolute inset-0 will-change-transform">
-        {canRender3D ? (
-          <Suspense
-            fallback={
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,rgba(2,6,23,0)_60%)]" />
-            }
-          >
-            <LazySpline scene="https://prod.spline.design/OIGfFUmCnZ3VD8gH/scene.splinecode" style={{ width: '100%', height: '100%' }} />
-          </Suspense>
-        ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,rgba(2,6,23,0)_60%)]" />
-        )}
-      </motion.div>
+    <section className="relative min-h-[96vh] flex items-center overflow-hidden bg-slate-950">
+      {/* Clean, cinematic gradient background (no image) */}
+      <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(16,185,129,0.18),transparent_60%),radial-gradient(800px_400px_at_10%_20%,rgba(16,185,129,0.10),transparent_55%),radial-gradient(900px_500px_at_90%_30%,rgba(16,185,129,0.06),transparent_55%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/50 to-black/70" />
 
-      {/* Depth overlays */}
-      <motion.div style={{ opacity: overlayOpacity }} className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/70 to-black/80 pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.14)_0%,rgba(0,0,0,0)_52%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950/60 to-transparent" />
+      {/* Soft floating accents */}
+      <motion.div aria-hidden className="absolute -top-24 -left-20 h-[42rem] w-[42rem] rounded-full bg-emerald-500/10 blur-3xl" style={{ y: y1 }} />
+      <motion.div aria-hidden className="absolute -bottom-32 -right-24 h-[36rem] w-[36rem] rounded-full bg-emerald-400/10 blur-3xl" style={{ y: y2 }} />
 
       {/* Content */}
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid lg:grid-cols-2 gap-10 items-center mt-28">
+        <div className="grid lg:grid-cols-2 gap-10 items-center pt-24 pb-12">
           {/* Left copy */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-4 py-2 text-xs text-slate-300" aria-label="Hosting tagline">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-4 py-2 text-xs text-slate-200" aria-label="Hosting tagline">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Premium Minecraft Hosting
-              <span className="mx-2 h-3 w-px bg-slate-700" />
+              <span className="mx-2 h-3 w-px bg-white/10" />
               Free Minecraft Servers
             </div>
-            <h1 className="mt-6 text-4xl sm:text-6xl font-black tracking-tight text-white drop-shadow-[0_6px_24px_rgba(16,185,129,0.25)]">
+            <h1 className="mt-6 text-4xl sm:text-6xl font-black tracking-tight text-white">
               Start free. Scale to premium power.
             </h1>
             <p className="mt-4 max-w-xl text-slate-300">
@@ -75,36 +46,35 @@ export default function Hero() {
               <a href="#plans" className="inline-flex items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-semibold px-6 py-3 shadow-xl shadow-emerald-500/20 hover:bg-emerald-400 transition-all">
                 Get Started Free
               </a>
-              <a href="#plans" className="inline-flex items-center justify-center rounded-xl bg-white/5 text-white font-semibold px-6 py-3 backdrop-blur-sm border border-slate-800 hover:bg-white/10 transition-all">
+              <a href="#plans" className="inline-flex items-center justify-center rounded-xl bg-white/5 text-white font-semibold px-6 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all">
                 View Plans
               </a>
             </div>
 
             {/* Trust badges */}
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-400" role="list" aria-label="Trust badges">
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">99.9% Uptime</span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">DDoS Protected</span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">Instant Setup</span>
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-300/90" role="list" aria-label="Trust badges">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">99.9% Uptime</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">DDoS Protected</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">Instant Setup</span>
             </div>
           </motion.div>
 
           {/* Right console card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.1 }}
+            transition={{ duration: 0.65, delay: 0.05 }}
             className="relative"
             aria-label="Server console preview"
           >
-            <div className="relative rounded-2xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-4 md:p-6 overflow-hidden">
-              <div className="absolute -inset-px pointer-events-none bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/0 hover:via-emerald-500/10 transition" />
+            <div className="relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 md:p-6 overflow-hidden">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-slate-300">MC Server Console</div>
+                <div className="text-sm text-slate-200">MC Server Console</div>
                 <div className="flex items-center gap-2 text-xs text-emerald-300" aria-live="polite">
                   <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" /> Online
                 </div>
               </div>
-              <div className="mt-3 rounded-lg bg-black/40 border border-slate-800 font-mono text-[12px] leading-relaxed p-3 text-slate-300 h-56 overflow-auto" aria-label="Console output">
+              <div className="mt-3 rounded-lg bg-black/40 border border-white/10 font-mono text-[12px] leading-relaxed p-3 text-slate-200 h-56 overflow-auto" aria-label="Console output">
                 <div className="text-slate-400">4:23:12 PM</div>
                 {[
                   '[4:23:08 PM] [INFO] Loading server properties...',
@@ -122,23 +92,23 @@ export default function Hero() {
 
               {/* Stats */}
               <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-xl border border-slate-800 bg-white/5 p-3">
-                  <div className="text-xs text-slate-400">Memory Usage</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="text-xs text-slate-300/90">Memory Usage</div>
                   <div className="mt-1 text-sm text-white">2102MB / 4096MB</div>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-white/5 p-3">
-                  <div className="text-xs text-slate-400">Players Online</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="text-xs text-slate-300/90">Players Online</div>
                   <div className="mt-1 text-sm text-white">24/100</div>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-white/5 p-3">
-                  <div className="text-xs text-slate-400">TPS</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="text-xs text-slate-300/90">TPS</div>
                   <div className="mt-1 text-sm text-white">20.0</div>
                 </div>
               </div>
 
               {/* Command input */}
               <div className="mt-4 flex items-center gap-2">
-                <div className="rounded-xl border border-slate-800 bg-black/40 px-3 py-2 flex-1 text-slate-400 text-sm" aria-label="Command input placeholder">$ Type a command...</div>
+                <div className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 flex-1 text-slate-400 text-sm" aria-label="Command input placeholder">$ Type a command...</div>
                 <button className="rounded-xl bg-emerald-500 text-slate-950 text-sm font-semibold px-4 py-2 hover:bg-emerald-400">Run</button>
               </div>
             </div>
@@ -147,11 +117,11 @@ export default function Hero() {
 
         {/* Under-hero chips */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.9, delay: 0.2 }}
-          className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4"
+          transition={{ duration: 0.65, delay: 0.08 }}
+          className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4"
           role="list"
           aria-label="Highlights"
         >
@@ -161,7 +131,7 @@ export default function Hero() {
             ['DDoS Protected', 'Advanced mitigation'],
             ['Instant Backups', 'Restore in one click'],
           ].map(([title, desc]) => (
-            <div key={title} className="rounded-2xl bg-white/5 border border-slate-800 p-4 text-left">
+            <div key={title} className="rounded-2xl bg-white/5 border border-white/10 p-4 text-left">
               <p className="text-sm text-emerald-300 font-semibold">{title}</p>
               <p className="text-xs text-slate-300/80">{desc}</p>
             </div>
@@ -169,8 +139,8 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Floor fade */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/60 to-transparent" />
+      {/* Floor fade to blend with the next section */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
     </section>
   )
 }
