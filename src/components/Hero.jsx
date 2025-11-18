@@ -1,21 +1,52 @@
-import { useRef } from 'react'
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Spline from '@splinetool/react-spline'
+
+// Lazy-load Spline to avoid hard failures on browsers/environments without WebGL
+const LazySpline = lazy(() =>
+  import('@splinetool/react-spline')
+    .then((m) => ({ default: m.default }))
+    .catch(() => ({ default: () => null }))
+)
 
 export default function Hero() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
 
-  // Parallax transforms for cinematic feel
-  const translateY = useTransform(scrollYProgress, [0, 1], [0, -140])
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.12, 0.4])
+  // Respect reduced motion preferences
+  const [reducedMotion, setReducedMotion] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'matchMedia' in window) {
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setReducedMotion(mq.matches)
+      const listener = (e) => setReducedMotion(e.matches)
+      mq.addEventListener?.('change', listener)
+      return () => mq.removeEventListener?.('change', listener)
+    }
+  }, [])
+
+  // Parallax transforms for cinematic feel (disabled if reduced motion)
+  const translateY = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0, 0] : [0, -140])
+  const scale = useTransform(scrollYProgress, [0, 1], reducedMotion ? [1, 1] : [1, 1.12])
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], reducedMotion ? [0.18, 0.18] : [0.12, 0.4])
+
+  // Guard rendering Spline only on client
+  const canRender3D = useMemo(() => typeof window !== 'undefined', [])
 
   return (
     <section ref={ref} className="relative min-h-[110vh] flex items-center overflow-hidden bg-slate-950">
-      {/* 3D Parallax Background */}
+      {/* 3D Parallax Background (with safe fallback) */}
       <motion.div style={{ y: translateY, scale }} className="absolute inset-0 will-change-transform">
-        <Spline scene="https://prod.spline.design/OIGfFUmCnZ3VD8gH/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+        {canRender3D ? (
+          <Suspense
+            fallback={
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,rgba(2,6,23,0)_60%)]" />
+            }
+          >
+            <LazySpline scene="https://prod.spline.design/OIGfFUmCnZ3VD8gH/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+          </Suspense>
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,rgba(2,6,23,0)_60%)]" />
+        )}
       </motion.div>
 
       {/* Depth overlays */}
@@ -28,7 +59,7 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-10 items-center mt-28">
           {/* Left copy */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-4 py-2 text-xs text-slate-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-4 py-2 text-xs text-slate-300" aria-label="Hosting tagline">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Premium Minecraft Hosting
               <span className="mx-2 h-3 w-px bg-slate-700" />
@@ -50,7 +81,7 @@ export default function Hero() {
             </div>
 
             {/* Trust badges */}
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-400">
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-400" role="list" aria-label="Trust badges">
               <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">99.9% Uptime</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">DDoS Protected</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1">Instant Setup</span>
@@ -63,18 +94,19 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1 }}
             className="relative"
+            aria-label="Server console preview"
           >
             <div className="relative rounded-2xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-4 md:p-6 overflow-hidden">
               <div className="absolute -inset-px pointer-events-none bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/0 hover:via-emerald-500/10 transition" />
               <div className="flex items-center justify-between">
                 <div className="text-sm text-slate-300">MC Server Console</div>
-                <div className="flex items-center gap-2 text-xs text-emerald-300">
+                <div className="flex items-center gap-2 text-xs text-emerald-300" aria-live="polite">
                   <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" /> Online
                 </div>
               </div>
-              <div className="mt-3 rounded-lg bg-black/40 border border-slate-800 font-mono text-[12px] leading-relaxed p-3 text-slate-300 h-56 overflow-auto">
+              <div className="mt-3 rounded-lg bg-black/40 border border-slate-800 font-mono text-[12px] leading-relaxed p-3 text-slate-300 h-56 overflow-auto" aria-label="Console output">
                 <div className="text-slate-400">4:23:12 PM</div>
-                {[ 
+                {[
                   '[4:23:08 PM] [INFO] Loading server properties...',
                   '[4:23:08 PM] [INFO] Starting Minecraft server version 1.20.1',
                   '[4:23:08 PM] [INFO] Loading worlds...',
@@ -106,7 +138,7 @@ export default function Hero() {
 
               {/* Command input */}
               <div className="mt-4 flex items-center gap-2">
-                <div className="rounded-xl border border-slate-800 bg-black/40 px-3 py-2 flex-1 text-slate-400 text-sm">$ Type a command...</div>
+                <div className="rounded-xl border border-slate-800 bg-black/40 px-3 py-2 flex-1 text-slate-400 text-sm" aria-label="Command input placeholder">$ Type a command...</div>
                 <button className="rounded-xl bg-emerald-500 text-slate-950 text-sm font-semibold px-4 py-2 hover:bg-emerald-400">Run</button>
               </div>
             </div>
@@ -120,6 +152,8 @@ export default function Hero() {
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.2 }}
           className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4"
+          role="list"
+          aria-label="Highlights"
         >
           {[
             ['99.9% Uptime', 'SLA-backed'],

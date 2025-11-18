@@ -1,4 +1,4 @@
-import { Server, Discord, Twitter, Video, ChevronRight } from 'lucide-react'
+import { Server, MessageCircle, Twitter, Video, ChevronRight } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -15,7 +15,7 @@ export default function Footer() {
               Premium Minecraft server hosting with exceptional performance, reliability, and 24/7 support.
             </p>
             <div className="mt-6 flex items-center gap-4 text-slate-300">
-              <a href="#" aria-label="Discord" className="hover:text-white transition-colors"><Discord className="h-5 w-5" /></a>
+              <a href="#" aria-label="Community" className="hover:text-white transition-colors"><MessageCircle className="h-5 w-5" /></a>
               <a href="#" aria-label="X (Twitter)" className="hover:text-white transition-colors"><Twitter className="h-5 w-5" /></a>
               <a href="#" aria-label="Tiktok" className="hover:text-white transition-colors"><Video className="h-5 w-5" /></a>
             </div>
