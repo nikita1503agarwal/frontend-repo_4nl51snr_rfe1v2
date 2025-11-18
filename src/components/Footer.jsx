@@ -2,11 +2,11 @@ import { Server, Twitter, Github, Mail } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/10 bg-slate-950">
+    <footer className="relative border-t border-slate-800 bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
           <div className="flex items-center gap-2 text-white">
-            <Server className="h-6 w-6 text-emerald-300" />
+            <Server className="h-6 w-6 text-emerald-400" />
             <span className="font-semibold">BlockHost</span>
           </div>
           <div className="text-slate-400 text-sm">

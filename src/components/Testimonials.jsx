@@ -18,9 +18,11 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="relative py-24 bg-gradient-to-b from-slate-950 to-slate-950">
+    <section id="testimonials" className="relative py-24 bg-slate-950">
+      <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background:radial-gradient(circle_at_30%_20%,#10b981_1px,transparent_1px)] [background-size:18px_18px]" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-2 text-emerald-300">
+        <div className="flex items-center justify-center gap-2 text-emerald-400">
           <Quote className="h-5 w-5" />
           <span className="text-sm uppercase tracking-wider">What players say</span>
         </div>
@@ -30,7 +32,8 @@ export default function Testimonials() {
 
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <motion.blockquote key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <motion.blockquote key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 overflow-hidden">
+              <div className="absolute -inset-px bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/0 hover:via-emerald-500/10 transition-all pointer-events-none" />
               <p className="text-slate-200">“{t.quote}”</p>
               <footer className="mt-4 text-sm text-slate-400">— {t.name}</footer>
             </motion.blockquote>

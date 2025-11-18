@@ -32,7 +32,9 @@ const plans = [
 
 export default function Plans() {
   return (
-    <section id="plans" className="relative py-24 bg-gradient-to-b from-slate-900 to-slate-950">
+    <section id="plans" className="relative py-24 bg-slate-950">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,rgba(2,6,23,0)_60%)]" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-3xl sm:text-5xl font-extrabold text-white">
@@ -45,10 +47,17 @@ export default function Plans() {
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan, i) => (
-            <motion.div key={plan.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className={`relative rounded-2xl p-6 border ${plan.popular ? 'border-emerald-400/30 bg-gradient-to-b from-emerald-400/10 to-white/5' : 'border-white/10 bg-white/5'}`}>
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className={`relative rounded-2xl p-6 border ${plan.popular ? 'border-emerald-500/40 bg-slate-900/70' : 'border-slate-800 bg-slate-900/60'}`}
+            >
               {plan.popular && (
                 <div className="absolute -top-3 left-6 right-6 text-center">
-                  <span className="inline-block text-[10px] uppercase tracking-wider bg-emerald-400 text-slate-900 font-bold px-2 py-1 rounded-md shadow">
+                  <span className="inline-block text-[10px] uppercase tracking-wider bg-emerald-500 text-slate-950 font-bold px-2 py-1 rounded-md shadow">
                     Most Popular
                   </span>
                 </div>
@@ -66,7 +75,7 @@ export default function Plans() {
                   <li key={f}>{f}</li>
                 ))}
               </ul>
-              <a href="#" className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-amber-400 text-slate-900 font-semibold px-4 py-2 shadow-emerald-500/20 shadow-lg hover:shadow-amber-400/30 transition-all">
+              <a href="#" className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-semibold px-4 py-2 shadow-emerald-500/20 shadow-lg hover:bg-emerald-400 transition-all">
                 Start now
               </a>
             </motion.div>
