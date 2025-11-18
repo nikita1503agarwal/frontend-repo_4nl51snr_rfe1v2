@@ -1,0 +1,42 @@
+import { motion } from 'framer-motion'
+import { Quote } from 'lucide-react'
+
+const testimonials = [
+  {
+    name: 'Alex (SMP Owner)',
+    quote: 'We moved our 30-player modded SMP here and TPS is rock solid. The one-click modpacks and backups saved hours.',
+  },
+  {
+    name: 'PixelBuilder',
+    quote: 'Spun up a creative server for an event in minutes. The UI is clean and the support team actually knows Minecraft.',
+  },
+  {
+    name: 'RedstoneLabs',
+    quote: 'Finally a host that handles redstone-heavy farms without lag. Obsidian plan is worth every cent.',
+  },
+]
+
+export default function Testimonials() {
+  return (
+    <section id="testimonials" className="relative py-24 bg-gradient-to-b from-slate-950 to-slate-950">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center gap-2 text-emerald-300">
+          <Quote className="h-5 w-5" />
+          <span className="text-sm uppercase tracking-wider">What players say</span>
+        </div>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-3 text-center text-3xl sm:text-5xl font-extrabold text-white">
+          Loved by creators
+        </motion.h2>
+
+        <div className="mt-12 grid md:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
+            <motion.blockquote key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <p className="text-slate-200">“{t.quote}”</p>
+              <footer className="mt-4 text-sm text-slate-400">— {t.name}</footer>
+            </motion.blockquote>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
