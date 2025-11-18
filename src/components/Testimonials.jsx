@@ -3,16 +3,22 @@ import { Quote } from 'lucide-react'
 
 const testimonials = [
   {
-    name: 'Alex (SMP Owner)',
-    quote: 'We moved our 30-player modded SMP here and TPS is rock solid. The one-click modpacks and backups saved hours.',
+    name: 'Alex Johnson',
+    role: 'Server Owner, 2 years',
+    quote:
+      'I started with the free tier and upgraded as my community grew. The transition was seamless, and the performance is outstanding!',
   },
   {
-    name: 'PixelBuilder',
-    quote: 'Spun up a creative server for an event in minutes. The UI is clean and the support team actually knows Minecraft.',
+    name: 'Sarah Miller',
+    role: 'Modpack Enthusiast',
+    quote:
+      'Customer support is fantastic! When I needed help setting up a complex modpack, they were patient and helped me every step of the way.',
   },
   {
-    name: 'RedstoneLabs',
-    quote: 'Finally a host that handles redstone-heavy farms without lag. Obsidian plan is worth every cent.',
+    name: 'Michael Chen',
+    role: 'Gaming Community Leader',
+    quote:
+      'The control panel is so easy to use, and the one-click mod installer saved me so much time. Highly recommend for anyone running a server!',
   },
 ]
 
@@ -24,18 +30,31 @@ export default function Testimonials() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center gap-2 text-emerald-400">
           <Quote className="h-5 w-5" />
-          <span className="text-sm uppercase tracking-wider">What players say</span>
+          <span className="text-sm uppercase tracking-wider">What Our Customers Say</span>
         </div>
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-3 text-center text-3xl sm:text-5xl font-extrabold text-white">
-          Loved by creators
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-3 text-center text-3xl sm:text-5xl font-extrabold text-white"
+        >
+          Don't just take our word for it
         </motion.h2>
 
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <motion.blockquote key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 overflow-hidden">
+            <motion.blockquote
+              key={t.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6 overflow-hidden"
+            >
               <div className="absolute -inset-px bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/0 hover:via-emerald-500/10 transition-all pointer-events-none" />
               <p className="text-slate-200">“{t.quote}”</p>
-              <footer className="mt-4 text-sm text-slate-400">— {t.name}</footer>
+              <footer className="mt-4 text-sm text-slate-400">— {t.name} • {t.role}</footer>
             </motion.blockquote>
           ))}
         </div>

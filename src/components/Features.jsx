@@ -3,18 +3,18 @@ import { Shield, Rocket, Cpu, Cloud, Zap, Boxes } from 'lucide-react'
 
 export default function Features() {
   const items = [
-    { icon: Shield, title: 'DDoS Protection', desc: 'Enterprise-grade mitigation keeps your worlds online.' },
-    { icon: Rocket, title: 'One-click Modpacks', desc: 'Install Forge, Fabric, Paper and 1000s of packs instantly.' },
-    { icon: Cpu, title: 'NVMe + Ryzen', desc: 'Top-tier hardware for ultra-low tick lag and TPS stability.' },
-    { icon: Cloud, title: 'Global Locations', desc: 'Pick the closest region for the best ping anywhere.' },
-    { icon: Zap, title: 'Instant Scaling', desc: 'Upgrade RAM and slots as your community grows.' },
-    { icon: Boxes, title: 'Backups & Schedules', desc: 'Automated snapshots and restore in one click.' },
+    { icon: Rocket, title: 'Blazing Fast Performance', desc: 'Powered by high‑frequency CPUs and NVMe SSDs for lightning‑fast loading times and lag‑free gameplay.' },
+    { icon: Shield, title: 'Unmatched Security', desc: 'Advanced DDoS protection and automatic backups to keep your server safe and your data secure.' },
+    { icon: Cpu, title: 'Premium Hardware', desc: 'DDR5 RAM options and modern Ryzen cores for stable 20 TPS even under load.' },
+    { icon: Cloud, title: 'Global Locations', desc: 'Pick the closest region for the best ping across Europe and America.' },
+    { icon: Zap, title: 'Instant Setup', desc: 'Spin up servers in seconds with one‑click installers for Forge, Fabric, Paper.' },
+    { icon: Boxes, title: 'Backups & Schedules', desc: 'Automated snapshots and restores in one click keep you covered.' },
   ]
 
   return (
     <section id="features" className="relative py-24 bg-slate-950">
-      {/* Subtle grid for 3D vibe */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:24px_24px]" />
+      {/* Subtle grid */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.05] [background:linear-gradient(to_right,rgba(148,163,184,0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.3)_1px,transparent_1px)] [background-size:24px_24px]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
@@ -25,10 +25,10 @@ export default function Features() {
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-5xl font-extrabold text-white"
           >
-            Built for creators and SMPs
+            Why Choose MCServerHost?
           </motion.h2>
           <p className="mt-3 text-slate-300 max-w-2xl mx-auto">
-            Everything you need to run smooth, modded or vanilla servers — with zero hassle.
+            We provide the best Minecraft hosting experience with cutting‑edge hardware and exceptional support.
           </p>
         </div>
 
